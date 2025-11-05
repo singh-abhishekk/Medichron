@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static',filename = 'contact.css')}}" rel="stylesheet">
+    <title>contact</title> <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <section class="footer_get_touch_outer">
+      <div class="container">
+        <div class="footer_get_touch_inner grid-70-30">
+          <div class="colmun-70 get_form">
+            <div class="get_form_inner">
+              <div class="get_form_inner_text">
+                <h3>Contact Us</h3>
+              </div>
+              <form method="POST">
+                <div class="grid-50-50">
+                  <input name = 'firstname' type="text" placeholder="First Name">
+                  <input name = 'lastname' type="text" placeholder="Last Name">
+                  <input name = 'email' type="email" placeholder="Email">
+                  <input name = 'phone' type="tel" placeholder="Phone">
+                </div>
+                <div class="grid-full">
+                 <input name ="messege" type="text" placeholder="Enter your messege">
+                 <br>
+                 <br>
+                  <button class = "submit" type = "submit" submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="colmun-30 get_say_form">
+            <h5>Say Hi!</h5>
+            <ul class="get_say_info_sec">
+              <li>
+                <i class="fa fa-envelope"></i>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=projectumc2023paas@gmail.com">projectumc2023paas@gmail.com</a>
+              </li>
+              <!-- <li>
+                <i class="fa fa-whatsapp"></i>
+                <a href="tel:">+91 9686104981</a>
+              </li> -->
+              <li>
+                <i class="fa fa-twitter"></i>
+                <a href="https://twitter.com/medichron">medichron</a> 
+              </li>
+              <li>
+                <i class="fa fa-instagram"></i>
+                <a href="https://www.instagram.com/medichron/">medichron</a> 
+              </li>
+            </ul>  
+            <!-- <ul class="get_say_social-icn">
+              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+            </ul>           -->
+          </div>        
+        </div>
+      </div>
+    </section>
+  </body>
+
+</html>

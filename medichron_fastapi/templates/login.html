@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="{{ url_for('static',filename = 'login.css')}}"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <title>Login-page</title>
+  </head>
+  <body>
+    <div class="center">
+      <h1>Login</h1>
+      <form method="POST">
+        <div class="txt_field">
+          <input type="text" required name="username" />
+          <span></span>
+          <label>Username/Email</label>
+        </div>
+        <span>{{error}}</span>
+        <div class="txt_field">
+          <input type="password" required name="password" />
+          <span></span>
+          <label>Password</label>
+        </div>
+        <div class="doc">
+          <input type="checkbox" name="check" /><span class="rem">
+            I am a Doctor</span
+          >
+        </div>
+        <br />
+        <br />
+        <!-- <div class="pass">Forgot Password?</div>
+        <div class="remember">
+          <input type="checkbox" name="check" /><span class="rem"
+            >Remember me</span>
+        </div> -->
+        <input type="submit" value="Login" />
+        <div class="signup_link">
+          Not a member? <a href="/register">Signup</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

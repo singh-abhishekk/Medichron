@@ -1,9 +1,11 @@
 """
 Main FastAPI application.
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
 from app.core.config import settings
@@ -45,6 +47,19 @@ qr_code_path.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Setup templates
+templates = Jinja2Templates(directory="templates")
+
+# Add url_for function to templates for Flask compatibility
+def url_for(endpoint: str, **values):
+    """Mimic Flask's url_for for template compatibility."""
+    if endpoint == "static":
+        filename = values.get("filename", "")
+        return f"/static/{filename}"
+    return f"/{endpoint}"
+
+templates.env.globals["url_for"] = url_for
+
 
 @app.get("/")
 def root():
@@ -73,6 +88,67 @@ def health_check():
         Health status
     """
     return {"status": "healthy"}
+
+
+# Template routes for frontend pages
+@app.get("/home", response_class=HTMLResponse)
+async def home_page(request: Request):
+    """Serve the home page."""
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    """Serve the login page."""
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request):
+    """Serve the registration page."""
+    return templates.TemplateResponse("register.html", {"request": request})
+
+
+@app.get("/doctor-register", response_class=HTMLResponse)
+async def doctor_register_page(request: Request):
+    """Serve the doctor registration page."""
+    return templates.TemplateResponse("doctor.html", {"request": request})
+
+
+@app.get("/dashboard/user", response_class=HTMLResponse)
+async def user_dashboard_page(request: Request):
+    """Serve the user dashboard page."""
+    return templates.TemplateResponse("dashboardUser.html", {"request": request})
+
+
+@app.get("/dashboard/doctor", response_class=HTMLResponse)
+async def doctor_dashboard_page(request: Request):
+    """Serve the doctor dashboard page."""
+    return templates.TemplateResponse("dashboardDoc.html", {"request": request})
+
+
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page(request: Request):
+    """Serve the contact page."""
+    return templates.TemplateResponse("contact.html", {"request": request})
+
+
+@app.get("/history/user", response_class=HTMLResponse)
+async def user_history_page(request: Request):
+    """Serve the user history page."""
+    return templates.TemplateResponse("historyUser.html", {"request": request})
+
+
+@app.get("/history/doctor", response_class=HTMLResponse)
+async def doctor_history_page(request: Request):
+    """Serve the doctor history page."""
+    return templates.TemplateResponse("historyDoctor.html", {"request": request})
+
+
+@app.get("/qr-generate", response_class=HTMLResponse)
+async def qr_generate_page(request: Request):
+    """Serve the QR code generation page."""
+    return templates.TemplateResponse("qrgenerate.html", {"request": request})
 
 
 if __name__ == "__main__":

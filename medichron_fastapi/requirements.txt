@@ -30,9 +30,12 @@ httpx==0.26.0
 # Development and testing
 pytest==7.4.4
 pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+pytest-xdist==3.5.0
 black==23.12.1
 flake8==7.0.0
 mypy==1.8.0
+faker==22.0.0
 
 # CORS
 starlette==0.35.1

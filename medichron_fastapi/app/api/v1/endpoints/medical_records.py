@@ -51,6 +51,34 @@ def create_medical_record(
     return record
 
 
+@router.get("/patient/me", response_model=List[MedicalRecord])
+def read_my_medical_records(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get medical records for current patient.
+
+    Args:
+        skip: Number of records to skip
+        limit: Maximum number of records to return
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        List of medical records
+    """
+    records = crud_medical_record.get_medical_records_by_patient(
+        db,
+        patient_id=current_user.id,
+        skip=skip,
+        limit=limit
+    )
+    return records
+
+
 @router.get("/patient/{patient_id}", response_model=List[MedicalRecord])
 def read_patient_medical_records(
     patient_id: int,
@@ -85,34 +113,6 @@ def read_patient_medical_records(
     records = crud_medical_record.get_medical_records_by_patient(
         db,
         patient_id=patient_id,
-        skip=skip,
-        limit=limit
-    )
-    return records
-
-
-@router.get("/patient/me", response_model=List[MedicalRecord])
-def read_my_medical_records(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get medical records for current patient.
-
-    Args:
-        skip: Number of records to skip
-        limit: Maximum number of records to return
-        db: Database session
-        current_user: Current authenticated user
-
-    Returns:
-        List of medical records
-    """
-    records = crud_medical_record.get_medical_records_by_patient(
-        db,
-        patient_id=current_user.id,
         skip=skip,
         limit=limit
     )

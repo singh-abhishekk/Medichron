@@ -2,7 +2,7 @@
 Contact form database model.
 """
 from sqlalchemy import Column, Integer, String, Text, DateTime
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.core.database import Base
 
@@ -18,5 +18,5 @@ class Contact(Base):
     email = Column(String, nullable=False)
     phone = Column(String)
     message = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     is_resolved = Column(Integer, default=0)  # 0 = pending, 1 = resolved

@@ -1,19 +1,38 @@
 """
 Main FastAPI application.
 """
+import time
+import uuid
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
+from loguru import logger
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
 from app.core.database import engine, Base
+from app.core.logging import setup_logging
 from app.api.v1.api import api_router
+
+# Setup logging
+setup_logging()
+logger.info("Application starting...")
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
+logger.info("Database tables created/verified")
+
+# Initialize rate limiter (in-memory, self-hosted)
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["100/minute"],  # Global rate limit
+    headers_enabled=True
+)
 
 # Create FastAPI app
 app = FastAPI(
@@ -25,6 +44,48 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Add rate limiter to app state
+app.state.limiter = limiter
+
+# Add rate limit exception handler
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Request logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Log all HTTP requests with timing and context."""
+    request_id = str(uuid.uuid4())
+    start_time = time.time()
+
+    # Bind request context
+    with logger.contextualize(
+        request_id=request_id,
+        method=request.method,
+        path=request.url.path,
+        client=request.client.host if request.client else None
+    ):
+        logger.info(f"Request started: {request.method} {request.url.path}")
+
+        try:
+            response = await call_next(request)
+            process_time = time.time() - start_time
+
+            logger.info(
+                f"Request completed",
+                status_code=response.status_code,
+                duration_ms=round(process_time * 1000, 2)
+            )
+
+            return response
+        except Exception as e:
+            process_time = time.time() - start_time
+            logger.exception(
+                f"Request failed: {str(e)}",
+                duration_ms=round(process_time * 1000, 2)
+            )
+            raise
+
+
 # Set up CORS middleware
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
@@ -34,6 +95,7 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    logger.info(f"CORS configured with origins: {settings.BACKEND_CORS_ORIGINS}")
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)

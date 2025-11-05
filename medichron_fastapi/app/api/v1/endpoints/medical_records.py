@@ -57,10 +57,10 @@ def read_patient_medical_records(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: Union[User, Doctor] = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Get medical records for a specific patient.
+    Get medical records for a specific patient (patients can only view own records).
 
     Args:
         patient_id: Patient ID
@@ -71,7 +71,17 @@ def read_patient_medical_records(
 
     Returns:
         List of medical records
+
+    Raises:
+        HTTPException: If patient tries to access another patient's records
     """
+    # Patients can only access their own records
+    if current_user.id != patient_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot access other patients' medical records"
+        )
+
     records = crud_medical_record.get_medical_records_by_patient(
         db,
         patient_id=patient_id,
@@ -170,20 +180,22 @@ def read_my_doctor_records(
 @router.get("/{record_id}", response_model=MedicalRecord)
 def read_medical_record(
     record_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
-    Get a specific medical record.
+    Get a specific medical record (patients can only view their own records).
 
     Args:
         record_id: Medical record ID
         db: Database session
+        current_user: Current authenticated user
 
     Returns:
         Medical record data
 
     Raises:
-        HTTPException: If record not found
+        HTTPException: If record not found or unauthorized
     """
     record = crud_medical_record.get_medical_record(db, record_id=record_id)
     if not record:
@@ -191,6 +203,14 @@ def read_medical_record(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Medical record not found"
         )
+
+    # Patients can only view their own medical records
+    if record.patient_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot access other patients' medical records"
+        )
+
     return record
 
 

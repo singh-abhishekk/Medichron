@@ -1,0 +1,15 @@
+.qr{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12%;
+    width: 22%;
+}
+
+
+
+body{
+    background-image: url('depositphotos_255199314-stock-photo-light-blue-gradient-background-blue.jpg');
+    background-repeat: no-repeat;
+     background-size: cover;
+}

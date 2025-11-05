@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Patient History</title>
+  </head>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static',filename = 'historyDoctor.css')}}"
+  />
+
+  <body>
+    <h1>Patient History</h1>
+    <form  method="post">
+      
+      <!-- <label for="name">Date</label>
+      <input name = "date" type="date" id="name">
+      <br>
+      <br> -->
+      <label for="symptoms">Diagnosis:</label><br />
+      <input type="text" name = "symptoms" id="symptoms">
+
+      <label for="diagnosis">Treatment:</label><br />
+      <input type="text" name = "diagnosis" id="diagnosis">
+
+      <label for="treatment">Prescription:</label><br />
+      <input type="text" name = "treatment" id="treatment">
+
+      <button class= "kkk" type="submit" class="btn">Send</button>
+
+      <br>
+      <br>
+
+      <button class = "kkk" name = "back">User History</button>
+    </form>
+
+    
+  </body>
+</html>

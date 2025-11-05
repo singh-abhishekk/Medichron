@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Medical History</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="{{ url_for('static',filename = 'historyUser.css')}}"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h1>Medical History</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Diagnosis</th>
+          <th>Treatment</th>
+          <th>Prescription</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row[1] }}</td>
+          <td>{{ row[2] }}</td>
+          <td>{{ row[3] }}</td>
+          <td>{{ row[4] }}</td>
+          <td>{{ row[5] }}</td>
+        </tr>
+        {% endfor %}
+        <!-- <tr>
+          <td>2022-01-20</td>
+          <td>FEVER</td>
+          <td>XXXX</td>
+          <td>dolo</td>
+        </tr>
+        <tr>
+          <td>2021-08-02</td>
+          <td>CANCER</td>
+          <td>Pogo </td>
+          <td>Losartan and low-sodium diet</td>
+        </tr> -->
+      </tbody>
+    </table>
+    <form method ="POST">
+      <button class = "kkk" name = "pogo">Upload</button>
+      
+  </body>
+</html>

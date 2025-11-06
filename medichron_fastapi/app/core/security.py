@@ -3,7 +3,7 @@ Security utilities for password hashing and JWT token management.
 """
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Union, Any
-from jose import jwt
+import jwt
 from passlib.context import CryptContext
 
 from app.core.config import settings

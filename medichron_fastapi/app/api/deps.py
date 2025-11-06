@@ -4,7 +4,8 @@ API dependencies for authentication and authorization.
 from typing import Generator, Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+import jwt
+from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -53,7 +54,7 @@ def get_current_user(
         if username is None:
             raise credentials_exception
         token_data = TokenPayload(**payload)
-    except JWTError:
+    except InvalidTokenError:
         raise credentials_exception
 
     user = crud_user.get_user_by_username(db, username=username)
@@ -98,7 +99,7 @@ def get_current_doctor(
         if username is None:
             raise credentials_exception
         token_data = TokenPayload(**payload)
-    except JWTError:
+    except InvalidTokenError:
         raise credentials_exception
 
     doctor = crud_doctor.get_doctor_by_username(db, username=username)

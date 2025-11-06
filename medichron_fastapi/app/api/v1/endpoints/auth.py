@@ -2,9 +2,12 @@
 Authentication endpoints for login and registration.
 """
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from loguru import logger
 
 from app.core.config import settings
 from app.core.database import get_db
@@ -16,10 +19,13 @@ from app.schemas.user import UserCreate, User
 from app.schemas.doctor import DoctorCreate, Doctor
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/login", response_model=Token)
+@limiter.limit("5/minute")  # Strict rate limit for login
 def login(
+    request: Request,
     login_data: LoginRequest,
     db: Session = Depends(get_db)
 ):
@@ -50,6 +56,7 @@ def login(
         )
 
     if not user:
+        logger.warning(f"Failed login attempt for username: {login_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -57,6 +64,7 @@ def login(
         )
 
     if not user.is_active:
+        logger.warning(f"Inactive user login attempt: {login_data.username}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user"
@@ -68,6 +76,7 @@ def login(
         expires_delta=access_token_expires
     )
 
+    logger.info(f"Successful login: {login_data.username} (type: {login_data.user_type})")
     return {"access_token": access_token, "token_type": "bearer"}
 
 
